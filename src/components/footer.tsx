@@ -10,11 +10,12 @@ function Footer() {
                     {/* Logo + Description */}
                     <div>
                         <h3 className="text-xl font-semibold text-gray-900">
-                            AI Report Generator
+                            GitHub Profile Review Assistant
                         </h3>
                         <p className="mt-2 text-sm leading-relaxed">
-                            Generate professional, AI-powered reports on any topic.
-                            Designed for business, research, and strategic insights.
+                            Empowering hiring teams with AI-driven analysis of GitHub profiles—
+                            surfacing skills, project strengths, and collaboration habits for 
+                            smarter, data-informed developer hiring.
                         </p>
                     </div>
 
@@ -26,7 +27,13 @@ function Footer() {
                                 <Link href="/" className="hover:underline">Home</Link>
                             </li>
                             <li>
-                                <Link href="/report-generator" className="hover:underline">Generate Report</Link>
+                                <Link href="/profile-review" className="hover:underline">Review Profiles</Link>
+                            </li>
+                            <li>
+                                <Link href="/features" className="hover:underline">Features</Link>
+                            </li>
+                            <li>
+                                <Link href="/use-cases" className="hover:underline">Use Cases</Link>
                             </li>
                         </ul>
                     </div>

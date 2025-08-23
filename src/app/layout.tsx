@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: " AI Report Generator",
-  description: "Generate professional, AI-powered reports on any topic. Designed for business, research, and strategic insights.",
+  title: "GitHub Profile Review Assistant",
+  description: "Empowering hiring teams with AI-driven analysis of GitHub profiles— surfacing skills, project strengths, and collaboration habits for smarter, data-informed developer hiring.",
 };
 
 export default function RootLayout({

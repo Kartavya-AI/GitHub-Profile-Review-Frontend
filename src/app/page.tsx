@@ -10,42 +10,43 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import reportIllustration from "../../public/images/markus-spiske-XrIfY_4cK1w-unsplash.jpg";
+import githubIllustration from "../../public/images/markus-spiske-XrIfY_4cK1w-unsplash.jpg";
 import open from "../../public/images/share (1).png";
 import profile from "../../public/images/profile-user.png";
+
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { TextAnimate } from "@/components/magicui/text-animate";
 
 const reviews = [
     {
-        name: "Ananya Sharma",
-        username: "@ananya_researcher",
-        body: "The AI Report Generator saved me hours of work. I just uploaded my notes and it structured everything into a professional report instantly.",
+        name: "Neha Kapoor",
+        username: "@neha_recruiter",
+        body: "This tool completely changed the way I shortlist developers. Instead of scanning dozens of GitHub profiles manually, I get instant insights into skills, activity, and collaboration habits.",
     },
     {
-        name: "Rohit Verma",
-        username: "@rohit_student",
-        body: "As a student, I often struggle with formatting reports. This tool made it so easy — clean layout, accurate citations, and ready to submit!",
+        name: "Arjun Menon",
+        username: "@arjun_hr",
+        body: "As an HR professional, I can now understand technical depth without needing to write code myself. The summaries make candidate screening 10x faster and more objective.",
     },
     {
-        name: "Priya Mehta",
-        username: "@priya_manager",
-        body: "I used it for project documentation, and it organized data into clear sections. The AI summaries were sharp and to the point.",
+        name: "Simran Kaur",
+        username: "@simran_talent",
+        body: "The benchmarking feature is amazing — I can compare a candidate’s GitHub activity against peers for similar roles. It adds so much clarity to hiring decisions.",
     },
     {
-        name: "Siddharth Rao",
-        username: "@siddharth_consultant",
-        body: "The best part is customization. I could generate detailed or concise reports based on the audience. It really improved my client presentations.",
+        name: "Karan Malhotra",
+        username: "@karan_lead",
+        body: "I used it for evaluating open-source contributors, and it highlighted their best projects, code quality, and collaboration style. It’s like an X-ray for GitHub profiles.",
     },
     {
-        name: "Ishita Kulkarni",
-        username: "@ishita_writer",
-        body: "Normally, I spend hours editing reports. This generator handled formatting, flow, and even suggested professional headings.",
+        name: "Ritika Joshi",
+        username: "@ritika_agency",
+        body: "Our agency now saves hours every week when shortlisting remote developers. The assistant filters noise and surfaces exactly what clients want to see.",
     },
     {
-        name: "Amit Bansal",
-        username: "@amit_professor",
-        body: "I recommend this to my students. Instead of wasting time on formatting, they can focus on research — the tool handles the structure flawlessly.",
+        name: "Vikram Desai",
+        username: "@vikram_cto",
+        body: "I love how unbiased the reports are. Instead of gut-feel hiring, we now rely on data-driven GitHub insights. It’s streamlined our entire recruitment pipeline.",
     },
 ];
 
@@ -91,29 +92,29 @@ const ReviewCard = ({
 
 const steps = [
     {
-        title: "Step 1: Enter Report Details",
+        title: "Step 1: Enter Candidate GitHub Profile",
         description:
-            "Provide a topic for your report and select the desired type (e.g., Comprehensive Analysis, Market Report, Research Report). (API: /generate-report)",
+            "Provide a GitHub username or profile link to begin the evaluation. (API: /analyze-profile)",
     },
     {
-        title: "Step 2: Configure Options",
+        title: "Step 2: Scan Repositories & Contributions",
         description:
-            "Adjust report length, choose whether to include charts or sources, and optionally enable CrewAI for collaborative generation.",
+            "The assistant reviews public repositories, code samples, and contribution activity to capture technical depth. (API: /scan-repos)",
     },
     {
-        title: "Step 3: Generate Draft",
+        title: "Step 3: Detect Skills & Tech Stack",
         description:
-            "The AI compiles structured sections such as Introduction, Analysis, Insights, and Conclusion into a polished draft. (API: /generate-report or /generate-report-crew)",
+            "Automatically identifies programming languages, frameworks, and tools used across projects. (API: /detect-skills)",
     },
     {
-        title: "Step 4: Review & Edit",
+        title: "Step 4: Generate Profile Insights",
         description:
-            "Preview the generated report, formatted in Markdown. Make edits or refinements as needed before exporting.",
+            "Summarizes contribution graph, pull requests, code quality, collaboration habits, and highlights key projects. (API: /generate-insights)",
     },
     {
-        title: "Step 5: Export & Share",
+        title: "Step 5: Review & Export Report",
         description:
-            "Download the final report in Markdown or PDF, copy it directly, or integrate it into your workflow. (API: /export-report)",
+            "View the structured candidate profile with benchmarks against role standards. Export as PDF, share internally, or integrate into ATS. (API: /export-report)",
     },
 ];
 
@@ -130,20 +131,18 @@ export default function Home() {
                 {/* Badge */}
                 <div className="group mb-5 relative mx-auto flex items-center justify-center rounded-full px-2 py-1.5 bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white">
                     <h1 className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-full h-8 w-8 flex justify-center items-center">
-                        📊
+                        🔍
                     </h1>
 
                     <div className="text-sm font-light px-3 text-zinc-600">
-                        <AuroraText>
-                            AI-Powered Report Generator Agent
-                        </AuroraText>
+                        <AuroraText>GitHub Profile Review Assistant</AuroraText>
                     </div>
                 </div>
 
                 {/* Heading */}
                 <h1 className="text-5xl z-20 md:text-7xl font-bold tracking-tight leading-tight text-primary mb-6">
-                    Generate <AuroraText>Professional Reports</AuroraText> in
-                    Minutes with AI
+                    <AuroraText>Evaluate Developers</AuroraText> with AI-Powered
+                    GitHub Insights
                 </h1>
 
                 {/* Subheading */}
@@ -152,19 +151,18 @@ export default function Home() {
                     by="word"
                     className="text-lg z-20 md:text-xl text-muted-foreground max-w-2xl mb-8"
                 >
-                    Create detailed, structured, and presentation-ready reports
-                    on any topic. From market analysis to research papers, our
-                    AI organizes your content into polished documents —
-                    instantly.
+                    Empower hiring teams to make confident, data-driven
+                    decisions by analyzing GitHub profiles — surfacing skills,
+                    project strengths, and collaboration habits in minutes.
                 </TextAnimate>
 
                 {/* CTA */}
                 <div className="z-20">
                     <Link
-                        href="/report-generator"
+                        href="/profile-review"
                         className="rounded-full px-4 py-2 text-xl hover:shadow-lg cursor-pointer text-zinc-600 bg-zinc-100 shadow-zinc-500 shadow-md flex items-center gap-2"
                     >
-                        <span>Generate My Report</span>
+                        <span>Review a GitHub Profile</span>
                         <div className="rounded-full h-9 w-9 flex justify-center items-center hover:shadow-lg cursor-pointer text-zinc-600 bg-zinc-100 shadow-zinc-500 shadow-md">
                             <Image
                                 src={open}
@@ -211,8 +209,8 @@ export default function Home() {
                 {/* Text Section */}
                 <div className="md:w-1/2 text-center md:text-left space-y-4 order-2 md:order-1">
                     <h2 className="text-3xl md:text-5xl font-bold text-primary">
-                        Generate <AuroraText>Insightful Reports</AuroraText> in
-                        Seconds with AI.
+                        Analyze <AuroraText>GitHub Profiles</AuroraText> in
+                        Seconds with AI
                     </h2>
 
                     <TextAnimate
@@ -220,17 +218,18 @@ export default function Home() {
                         by="word"
                         className="text-lg z-20 md:text-xl text-muted-foreground max-w-2xl mb-8"
                     >
-                        Our AI Report Generator Agent creates professional,
-                        well-structured reports instantly. Provide your topic or
-                        data, choose a style, and get a clear, polished report
-                        that communicates your insights effectively.
+                        Empower hiring teams with data-informed insights. Our AI
+                        scans repositories, contributions, and projects to
+                        highlight skills, code quality, and collaboration habits
+                        — helping you evaluate developers faster and more
+                        objectively.
                     </TextAnimate>
 
                     <div className="mt-4">
-                        <Link href="/report-generator">
+                        <Link href="/profile-review">
                             <button className="shadow-2xl">
                                 <span className="rounded-full px-4 py-2 text-xl hover:shadow-lg cursor-pointer text-zinc-600 bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white">
-                                    ● Generate My Report
+                                    ● Review a GitHub Profile
                                 </span>
                             </button>
                         </Link>
@@ -240,8 +239,8 @@ export default function Home() {
                 {/* Image Section */}
                 <div className="md:w-1/2 mt-10 md:mt-0 order-1 md:order-2 flex bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white p-2 rounded-2xl justify-center">
                     <Image
-                        src={reportIllustration} // Replace with illustration relevant to reports
-                        alt="AI Report Generator"
+                        src={githubIllustration} // Replace with an illustration relevant to GitHub/code review
+                        alt="GitHub Profile Review Assistant"
                         className="w-full shadow-lg h-full rounded-lg object-cover"
                         width={10}
                         height={10}
@@ -281,15 +280,15 @@ export default function Home() {
                         className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
                     >
                         <AccordionTrigger>
-                            1. What is the AI Report Generator Agent?
+                            1. What is the GitHub Profile Review Assistant?
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                It&apos;s an AI-powered tool that transforms
-                                your topics or raw data into professional,
-                                well-structured reports. It organizes content
-                                into sections like Introduction, Analysis, and
-                                Conclusion, saving you hours of manual writing.
+                                It&apos;s an AI-powered tool that analyzes
+                                GitHub profiles to highlight skills, code
+                                quality, project strengths, and collaboration
+                                habits — helping teams evaluate developers more
+                                efficiently.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -303,12 +302,10 @@ export default function Home() {
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                Simply enter a topic or dataset, select your
-                                preferred report type (e.g., Market Report,
-                                Research Report, Comprehensive Analysis), and
-                                adjust length or formatting options. The AI
-                                instantly generates a polished draft for you to
-                                review and edit.
+                                Enter a GitHub username, and the AI scans public
+                                repositories, contributions, pull requests, and
+                                projects. It then generates a structured summary
+                                of technical expertise and coding practices.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -318,15 +315,15 @@ export default function Home() {
                         className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
                     >
                         <AccordionTrigger>
-                            3. Can I customize the report content?
+                            3. What kind of insights does it provide?
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                Yes. You can refine the generated draft, add
-                                your own sections, and modify the AI-generated
-                                content. You can also enable CrewAI for
-                                collaborative report generation when you need
-                                deeper insights.
+                                The assistant highlights languages, frameworks,
+                                code quality, contribution graph summaries,
+                                open-source involvement, and collaboration
+                                patterns. It also benchmarks activity against
+                                peers or role standards.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -336,13 +333,15 @@ export default function Home() {
                         className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
                     >
                         <AccordionTrigger>
-                            4. What kinds of reports can it generate?
+                            4. Who can benefit from this tool?
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                It can generate Market Reports, Research
-                                Reports, Project Summaries, Business Analyses,
-                                and more — tailored to your topic and needs.
+                                Recruiters, hiring managers, technical leads,
+                                and HR teams who need objective insights into
+                                candidates&apos; technical depth and coding
+                                practices. It&apos;s also useful for agencies
+                                shortlisting freelance talent.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -352,13 +351,14 @@ export default function Home() {
                         className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
                     >
                         <AccordionTrigger>
-                            5. Can it include charts, data, or references?
+                            5. Does it analyze private repositories?
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                Yes. You can choose to automatically include
-                                charts, statistics, references, or action points
-                                depending on your report type and preferences.
+                                No. The assistant only analyzes publicly
+                                available repositories, commits, and
+                                contributions to ensure transparency and
+                                security.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -368,14 +368,13 @@ export default function Home() {
                         className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
                     >
                         <AccordionTrigger>
-                            6. Who can benefit from this tool?
+                            6. Can it compare multiple candidates?
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                Students, researchers, business professionals,
-                                consultants, managers, and anyone who needs to
-                                generate clear, structured reports quickly and
-                                effectively.
+                                Yes. You can run reviews on multiple GitHub
+                                profiles and benchmark them side-by-side against
+                                peer activity or role requirements.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -385,13 +384,13 @@ export default function Home() {
                         className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
                     >
                         <AccordionTrigger>
-                            7. Can I export my reports?
+                            7. Can I export the analysis?
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                Yes. Reports can be exported in Markdown or PDF
-                                formats. You can also copy the content directly
-                                for use in other tools or presentations.
+                                Yes. The generated profile reviews can be
+                                exported in PDF or Markdown format, or copied
+                                directly for reports and presentations.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
@@ -405,10 +404,10 @@ export default function Home() {
                         </AccordionTrigger>
                         <AccordionContent className="flex flex-col gap-4 text-balance">
                             <p>
-                                Core report generation features are free.
-                                Premium features like advanced formatting,
-                                collaborative CrewAI mode, and extended export
-                                options may require a subscription.
+                                Basic profile summaries are free. Advanced
+                                features like benchmarking, deeper code quality
+                                metrics, and export options may require a
+                                subscription.
                             </p>
                         </AccordionContent>
                     </AccordionItem>
