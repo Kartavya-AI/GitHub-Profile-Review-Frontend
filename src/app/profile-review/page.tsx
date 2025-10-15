@@ -9,7 +9,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { cn } from "@/lib/utils";
-
+import type { AxiosError } from "axios";
 interface GitHubAnalysisResponse {
   status: string;
   github_username: string;
@@ -25,8 +25,6 @@ export default function GitHubProfileReviewPage() {
   const [error, setError] = useState("");
 
   const reportRef = useRef<HTMLDivElement>(null);
-
-  const API_URL = "https://code-analysis-87738157215.asia-south1.run.app";
 
   /** Convert Markdown → HTML when result updates */
   useEffect(() => {
@@ -73,25 +71,21 @@ const res = await axios.post(
   };
 
   setResult(normalizedResult);
-} catch (err: unknown) {
+}  catch (err: unknown) {
   console.error("Analysis Error:", err);
 
-  if (err instanceof Error) {
-    setError(err.message || "An unknown error occurred.");
-  } else if (
-    typeof err === "object" &&
-    err !== null &&
-    "response" in err &&
-    typeof (err as any).response === "object"
-  ) {
-    const response = (err as any).response;
-    setError(`Server Error: ${response.status} ${response.statusText}`);
-  } else if (
-    typeof err === "object" &&
-    err !== null &&
-    "request" in err
-  ) {
-    setError("Network error: Unable to reach the analysis server.");
+  if (axios.isAxiosError(err)) {
+    const axiosError = err as AxiosError;
+
+    if (axiosError.response) {
+      setError(`Server Error: ${axiosError.response.status} ${axiosError.response.statusText}`);
+    } else if (axiosError.request) {
+      setError("Network error: Unable to reach the analysis server.");
+    } else {
+      setError(axiosError.message || "An unknown Axios error occurred.");
+    }
+  } else if (err instanceof Error) {
+    setError(err.message);
   } else {
     setError("An unknown error occurred.");
   }
