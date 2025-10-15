@@ -48,49 +48,10 @@ export default function GitHubProfileReviewPage() {
   setError("");
   setResult(null);
 
-  // const repoUrl = `https://github.com/${username.trim()}`;
-
-  // try {
-  //   const res = await axios.post(
-  //     `${API_URL}/analyze?repo_url=${encodeURIComponent(repoUrl)}`,
-  //     {},
-  //     { timeout: 60000 }
-  //   );
-
-  //   console.log("🔍 Raw API response:", res.data);
-
-  //   // 🧠 Normalize API response into your expected shape
-  //   const normalizedResult = {
-  //     status: "success",
-  //     github_username: username.trim(),
-  //     analysis_steps: ["Languages detected", "Profile summary generated"],
-  //     result: {
-  //       raw: `### 🧠 GitHub Repository Analysis\n\n**Languages:**\n\`\`\`json\n${JSON.stringify(
-  //         res.data.languages,
-  //         null,
-  //         2
-  //       )}\n\`\`\`\n\n**Summary:**\n${res.data.summary}`,
-  //     },
-  //   };
-
-  //   setResult(normalizedResult);
-  // } catch (err: any) {
-  //   console.error("Analysis Error:", err);
-
-  //   if (err.response) {
-  //     setError(`Server Error: ${err.response.status} ${err.response.statusText}`);
-  //   } else if (err.request) {
-  //     setError("Network error: Unable to reach the analysis server.");
-  //   } else {
-  //     setError(err.message || "An unknown error occurred.");
-  //   }
-  // } finally {
-  //   setLoading(false);
-  // }
-
-  const repoUrl = `https://github.com/${username.trim()}`;
+  
+   const repoUrl = `https://github.com/${username.trim()}`;
   try {
-  // const res = await axios.post(`/api/proxy-analyze?repo_url=${encodeURIComponent(repoUrl)}`, {}, { timeout: 60000 })
+  
 const res = await axios.post(
   `/api/proxy-analyze?repo_url=${encodeURIComponent(repoUrl)}`,
   {},
