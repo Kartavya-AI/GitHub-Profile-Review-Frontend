@@ -3,20 +3,16 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Marquee } from "@/components/magicui/marquee";
 import { AuroraText } from "@/components/magicui/aurora-text";
-
+import ShimmerButton from "@/components/ShimmerButton";
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import githubIllustration from "../../public/images/markus-spiske-XrIfY_4cK1w-unsplash.jpg";
-import open from "../../public/images/share (1).png";
-import profile from "../../public/images/profile-user.png";
-
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { TextAnimate } from "@/components/magicui/text-animate";
-
+import VantaFogBackground from "@/components/VantaFogBackground";
 const reviews = [
     {
         name: "Neha Kapoor",
@@ -74,7 +70,7 @@ const ReviewCard = ({
                     width="32"
                     height="32"
                     alt=""
-                    src={profile}
+                    src="/images/profile-user.png"
                 />
                 <div className="flex flex-col">
                     <figcaption className="text-sm font-medium dark:text-white">
@@ -89,7 +85,7 @@ const ReviewCard = ({
         </figure>
     );
 };
-
+  
 const steps = [
     {
         title: "Step 1: Enter Candidate GitHub Profile",
@@ -120,59 +116,44 @@ const steps = [
 
 export default function Home() {
     return (
-        <main className="mx-auto bg-zinc-100">
-            <InteractiveGridPattern
-                className={cn(
-                    "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
-                    "inset-x-0 inset-y-[-30%] h-[200%] skew-y-12"
-                )}
-            />
-            <section className="pt-20 z-20 px-4 md:px-36 flex flex-col justify-center items-center text-center">
-                {/* Badge */}
-                <div className="group mb-5 relative mx-auto flex items-center justify-center rounded-full px-2 py-1.5 bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white">
-                    <h1 className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-full h-8 w-8 flex justify-center items-center">
-                        🔍
-                    </h1>
-
-                    <div className="text-sm font-light px-3 text-zinc-600">
-                        <AuroraText>GitHub Profile Review Assistant</AuroraText>
-                    </div>
+    <main className="relative bg-transparent overflow-hidden min-h-screen">
+         <VantaFogBackground />
+      <section className="relative min-h-[100vh] pt-28 px-6 md:px-36 max-w-6xl mx-auto text-center space-y-6 flex flex-col justify-center items-center z-10">
+             {/* <section className="pt-28 px-6 md:px-36 max-w-6xl mx-auto text-center space-y-6">  */}
+                <div className="inline-flex items-center gap-4 px-5 py-2 rounded-full bg-gradient-to-r from-indigo-200 via-purple-200 to-pink-200 shadow-md">
+                    <div className="bg-white rounded-full p-2 text-xl shadow">🔍</div>
+                    <span className="text-indigo-800 font-semibold text-md tracking-wide">
+                    <AuroraText>GitHub Profile Review Assistant</AuroraText>
+                    </span>
                 </div>
 
-                {/* Heading */}
-                <h1 className="text-5xl z-20 md:text-7xl font-bold tracking-tight leading-tight text-primary mb-6">
-                    <AuroraText>Evaluate Developers</AuroraText> with AI-Powered
-                    GitHub Insights
+                <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight text-indigo-900">
+                    <AuroraText>Evaluate Developers</AuroraText> with AI-Powered GitHub Insights
                 </h1>
 
-                {/* Subheading */}
                 <TextAnimate
                     animation="slideUp"
                     by="word"
-                    className="text-lg z-20 md:text-xl text-muted-foreground max-w-2xl mb-8"
+                    className="text-lg md:text-xl text-indigo-700 max-w-3xl mx-auto font-light"
                 >
-                    Empower hiring teams to make confident, data-driven
-                    decisions by analyzing GitHub profiles — surfacing skills,
-                    project strengths, and collaboration habits in minutes.
+                    Empower hiring teams to make confident, data-driven decisions by analyzing GitHub profiles — surfacing skills, project strengths, and collaboration habits in minutes.
                 </TextAnimate>
 
-                {/* CTA */}
-                <div className="z-20">
-                    <Link
-                        href="/profile-review"
-                        className="rounded-full px-4 py-2 text-xl hover:shadow-lg cursor-pointer text-zinc-600 bg-zinc-100 shadow-zinc-500 shadow-md flex items-center gap-2"
-                    >
-                        <span>Review a GitHub Profile</span>
-                        <div className="rounded-full h-9 w-9 flex justify-center items-center hover:shadow-lg cursor-pointer text-zinc-600 bg-zinc-100 shadow-zinc-500 shadow-md">
-                            <Image
-                                src={open}
-                                alt="open icon"
-                                className="h-6 w-6"
-                            />
-                        </div>
+                <div className="mt-6">
+                    <ShimmerButton className="px-8 py-4 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold text-lg shadow-lg hover:shadow-2xl">
+                    <Link href="/profile-review" className="flex items-center gap-3">
+                        Review a GitHub Profile
+                        <Image
+                        src="/images/share (1).png"
+                        alt="Open icon"
+                        className="h-6 w-6"
+                        width={24}
+                        height={24}
+                        />
                     </Link>
+                    </ShimmerButton>
                 </div>
-            </section>
+                </section>
 
             <section className="pt-20 z-20 lg:pt-32 pb-10 px-4 md:px-36 mx-auto">
                 <h2 className="text-4xl z-20 md:text-5xl font-bold text-center mb-16">
@@ -180,7 +161,7 @@ export default function Home() {
                     {/* <AuroraText>How It Works</AuroraText> */}
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
                     {steps.map((step, index) => (
                         <div
                             key={index}
@@ -202,8 +183,11 @@ export default function Home() {
                             </div>
                         </div>
                     ))}
-                </div>
+                </div> 
             </section>
+
+            
+
 
             <section className="flex mt-10 gap-8 flex-col md:flex-row items-center justify-between px-4 md:px-36 py-12">
                 {/* Text Section */}
@@ -226,20 +210,25 @@ export default function Home() {
                     </TextAnimate>
 
                     <div className="mt-4">
-                        <Link href="/profile-review">
-                            <button className="shadow-2xl">
-                                <span className="rounded-full px-4 py-2 text-xl hover:shadow-lg cursor-pointer text-zinc-600 bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white">
-                                    ● Review a GitHub Profile
-                                </span>
-                            </button>
+                        <ShimmerButton className="flex items-center gap-2 px-6 py-3">
+                        <Link href="/profile-review" className="flex items-center gap-2">
+                            <span>● Review a GitHub Profile</span>
+                            <Image
+                            src="/images/share (1).png"
+                            alt="open icon"
+                            className="h-6 w-6"
+                            width={24}
+                            height={24}
+                            />
                         </Link>
+                    </ShimmerButton>
                     </div>
                 </div>
 
                 {/* Image Section */}
                 <div className="md:w-1/2 mt-10 md:mt-0 order-1 md:order-2 flex bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white p-2 rounded-2xl justify-center">
                     <Image
-                        src={githubIllustration} // Replace with an illustration relevant to GitHub/code review
+                        src="/images/markus-spiske-XrIfY_4cK1w-unsplash.jpg"
                         alt="GitHub Profile Review Assistant"
                         className="w-full shadow-lg h-full rounded-lg object-cover"
                         width={10}
@@ -249,170 +238,128 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="mt-20 mx-4 md:mx-36">
-                <div className="relative flex w-full flex-col items-center justify-center overflow-hidden">
-                    <Marquee pauseOnHover className="[--duration:20s]">
-                        {firstRow.map((review) => (
-                            <ReviewCard key={review.username} {...review} />
-                        ))}
+            <section className="mt-32 px-4 md:px-36">
+                <div className="relative flex w-full flex-col items-center justify-center overflow-hidden gap-12">
+                    {/* Top Marquee Row */}
+                    <Marquee
+                    pauseOnHover
+                    className="[--duration:30s] gap-6 py-6"
+                    >
+                    {firstRow.map((review) => (
+                        <ReviewCard key={review.username} {...review} />
+                    ))}
                     </Marquee>
-                    <Marquee reverse pauseOnHover className="[--duration:20s]">
-                        {secondRow.map((review) => (
-                            <ReviewCard key={review.username} {...review} />
-                        ))}
-                    </Marquee>
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-zinc-100"></div>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-gradient-to-l from-zinc-100"></div>
-                </div>
-            </section>
 
-            <section className="px-4 md:px-36 mt-20 bg-zinc-100 py-10">
+                    {/* Bottom Marquee Row (Reversed) */}
+                    <Marquee
+                    reverse
+                    pauseOnHover
+                    className="[--duration:30s] gap-6 py-6"
+                    >
+                    {secondRow.map((review) => (
+                        <ReviewCard key={review.username} {...review} />
+                    ))}
+                    </Marquee>
+
+                    {/* Left & Right Gradient Masks */}
+                    <div className="pointer-events-none absolute inset-y-0 left-0 w-1/6 bg-gradient-to-r from-white via-white/90 to-transparent z-10" />
+                    <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 bg-gradient-to-l from-white via-white/90 to-transparent z-10" />
+                </div>
+                </section>
+
+            <section className="px-4 md:px-36 mt-32 bg-zinc-100 py-16">
+                <h2 className="text-4xl md:text-5xl font-bold text-center mb-10 text-primary">
+                    Frequently Asked Questions
+                </h2>
+
                 <Accordion
                     type="single"
                     collapsible
-                    className="w-full"
+                    className="w-full max-w-4xl mx-auto"
                     defaultValue="item-1"
                 >
-                    <h1 className="text-4xl mb-5 font-bold">FAQ&apos;S</h1>
-
+                    {[
+                    {
+                        q: "What is the GitHub Profile Review Assistant?",
+                        a: `It's an AI-powered tool that analyzes GitHub profiles to highlight skills, code quality, project strengths, and collaboration habits — helping teams evaluate developers more efficiently.`,
+                    },
+                    {
+                        q: "How does it work?",
+                        a: `Enter a GitHub username, and the AI scans public repositories, contributions, pull requests, and projects. It then generates a structured summary of technical expertise and coding practices.`,
+                    },
+                    {
+                        q: "What kind of insights does it provide?",
+                        a: `It highlights languages, frameworks, code quality, contribution graph summaries, open-source involvement, and collaboration patterns. It also benchmarks activity against peers or role standards.`,
+                    },
+                    {
+                        q: "Who can benefit from this tool?",
+                        a: `Recruiters, hiring managers, technical leads, and HR teams needing objective insights into candidates' technical depth. It's also useful for agencies shortlisting freelance talent.`,
+                    },
+                    {
+                        q: "Does it analyze private repositories?",
+                        a: `No. The assistant only analyzes publicly available repositories, commits, and contributions to ensure transparency and security.`,
+                    },
+                    {
+                        q: "Can it compare multiple candidates?",
+                        a: `Yes. You can review multiple profiles and benchmark them side-by-side against peer activity or role expectations.`,
+                    },
+                    {
+                        q: "Can I export the analysis?",
+                        a: `Yes. The profile reviews can be exported in PDF or Markdown format for reports and presentations.`,
+                    },
+                    {
+                        q: "Is it free to use?",
+                        a: `Basic summaries are free. Advanced features like benchmarking, deeper insights, and export options may require a subscription.`,
+                    },
+                    ].map((item, index) => (
+                    // <AccordionItem
+                    //     key={index}
+                    //     value={`item-${index + 1}`}
+                    //     className="bg-white rounded-xl border border-zinc-300 my-2 px-5"
+                    // >
+                    //     <AccordionTrigger className="text-lg font-medium text-left">
+                    //     {index + 1}. {item.q}
+                    //     </AccordionTrigger>
+                    //     <AccordionContent className="text-zinc-600 text-sm mt-2 leading-relaxed">
+                    //     {item.a}
+                    //     </AccordionContent>
+                    // </AccordionItem>
                     <AccordionItem
-                        value="item-1"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            1. What is the GitHub Profile Review Assistant?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                It&apos;s an AI-powered tool that analyzes
-                                GitHub profiles to highlight skills, code
-                                quality, project strengths, and collaboration
-                                habits — helping teams evaluate developers more
-                                efficiently.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
+                        key={index}
+                        value={`item-${index + 1}`}
+                        className="bg-white rounded-xl border border-zinc-300 my-2 px-5"
+                        >
+                        <AccordionTrigger
+                            className="
+                                relative
+                                text-lg font-medium text-left
+                                text-zinc-800
+                                no-underline
+                                cursor-pointer
+                                transition-all duration-300 ease-in-out
+                                hover:text-[#4a90e2]        /* soft blue */
+                                hover:bg-[#e6f0fa]          /* very light blue-gray */
+                                hover:shadow-[#4a90e2]/30
+                            "
+                            >
+                            {index + 1}. {item.q}
+                            <span
+                                className="
+                                absolute left-0 bottom-0 h-0.5 w-0 bg-blue-600
+                                transition-all duration-300 ease-in-out
+                                hover:w-full
+                                "
+                            />
+                            </AccordionTrigger>
 
-                    <AccordionItem
-                        value="item-2"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            2. How does it work?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                Enter a GitHub username, and the AI scans public
-                                repositories, contributions, pull requests, and
-                                projects. It then generates a structured summary
-                                of technical expertise and coding practices.
-                            </p>
+                        <AccordionContent className="text-zinc-600 text-sm mt-2 leading-relaxed">
+                            {item.a}
                         </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                        value="item-3"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            3. What kind of insights does it provide?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                The assistant highlights languages, frameworks,
-                                code quality, contribution graph summaries,
-                                open-source involvement, and collaboration
-                                patterns. It also benchmarks activity against
-                                peers or role standards.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                        value="item-4"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            4. Who can benefit from this tool?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                Recruiters, hiring managers, technical leads,
-                                and HR teams who need objective insights into
-                                candidates&apos; technical depth and coding
-                                practices. It&apos;s also useful for agencies
-                                shortlisting freelance talent.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                        value="item-5"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            5. Does it analyze private repositories?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                No. The assistant only analyzes publicly
-                                available repositories, commits, and
-                                contributions to ensure transparency and
-                                security.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                        value="item-6"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            6. Can it compare multiple candidates?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                Yes. You can run reviews on multiple GitHub
-                                profiles and benchmark them side-by-side against
-                                peer activity or role requirements.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                        value="item-7"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            7. Can I export the analysis?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                Yes. The generated profile reviews can be
-                                exported in PDF or Markdown format, or copied
-                                directly for reports and presentations.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
-
-                    <AccordionItem
-                        value="item-8"
-                        className="bg-zinc-100 shadow-zinc-500 shadow-md inset-shadow-2xs inset-shadow-white rounded-2xl px-5 my-2"
-                    >
-                        <AccordionTrigger>
-                            8. Is it free to use?
-                        </AccordionTrigger>
-                        <AccordionContent className="flex flex-col gap-4 text-balance">
-                            <p>
-                                Basic profile summaries are free. Advanced
-                                features like benchmarking, deeper code quality
-                                metrics, and export options may require a
-                                subscription.
-                            </p>
-                        </AccordionContent>
-                    </AccordionItem>
+                        </AccordionItem>
+                    ))}
                 </Accordion>
-            </section>
+                </section>
+
         </main>
     );
 }

@@ -1,4 +1,5 @@
-declare module "vanta/src/vanta.fog" {
-  const VANTA: (options: any) => any;
+// vanta.d.ts
+declare module "vanta/dist/vanta.*" {
+  const VANTA: any;
   export default VANTA;
 }
