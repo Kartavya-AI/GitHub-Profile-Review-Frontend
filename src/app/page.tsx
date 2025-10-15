@@ -10,7 +10,6 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
-import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { TextAnimate } from "@/components/magicui/text-animate";
 import VantaFogBackground from "@/components/VantaFogBackground";
 const reviews = [
