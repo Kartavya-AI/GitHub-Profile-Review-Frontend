@@ -1,11 +1,20 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { saveAs } from "file-saver";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
+
+const InteractiveGridPattern = dynamic(
+  () =>
+    import("@/components/magicui/interactive-grid-pattern").then(
+      (mod) => mod.InteractiveGridPattern
+    ),
+  { ssr: false }
+);
+
 
 interface GitHubProfile {
   username?: string;
@@ -18,7 +27,7 @@ interface GitHubProfile {
 
 interface GitHubAnalysisResponse {
   profile: GitHubProfile;
-  analysis?: { executive_summary?: string };
+  analysis?: { executive_summary?: string; summary?: string };
 }
 
 export default function GitHubProfileReviewPage() {
@@ -28,12 +37,10 @@ export default function GitHubProfileReviewPage() {
   const [followersDisplay, setFollowersDisplay] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [mounted, setMounted] = useState(false);
 
   const reportRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => setMounted(true), []);
-
+  // 🔍 Analyze GitHub user
   const handleAnalyze = async () => {
     if (!username.trim()) return alert("Please enter a GitHub username");
 
@@ -60,11 +67,13 @@ export default function GitHubProfileReviewPage() {
 
       const profile = data.profile;
 
-      // Fallback summary without bio
+      // 🪄 Fallback summary
       const fallbackSummary = `GitHub user ${profile.name || profile.username} has ${profile.followers ?? 0} followers, follows ${profile.following ?? 0}, and has ${profile.public_repos ?? 0} public repositories.`;
 
       const executiveSummary =
-        data.analysis?.executive_summary?.trim() || fallbackSummary;
+        data.analysis?.executive_summary?.trim() ||
+        data.analysis?.summary?.trim() ||
+        fallbackSummary;
 
       setSummary(executiveSummary);
       setFollowersDisplay(`Followers: ${profile.followers ?? 0} | Following: ${profile.following ?? 0}`);
@@ -77,14 +86,17 @@ export default function GitHubProfileReviewPage() {
     }
   };
 
+  // 📋 Copy summary to clipboard
   const handleCopy = () => summary && navigator.clipboard.writeText(summary);
 
+  // 💾 Download Markdown
   const handleDownload = () => {
     if (!summary) return;
     const blob = new Blob([summary], { type: "text/plain;charset=utf-8" });
     saveAs(blob, `${result?.profile.username || "github_user"}_profile_review.md`);
   };
 
+  // 📄 Download PDF
   const handleDownloadPDF = async () => {
     if (!reportRef.current) return;
     const canvas = await html2canvas(reportRef.current, { scale: 2 });
@@ -97,17 +109,15 @@ export default function GitHubProfileReviewPage() {
   };
 
   return (
-    <div className="bg-zinc-100 min-h-screen">
-      {mounted && (
-        <InteractiveGridPattern
-          className={cn(
-            "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
-            "inset-x-0 inset-y-[20%] h-[100%] skew-y-12 pointer-events-none"
-          )}
-        />
-      )}
+    <div className="bg-zinc-100 min-h-screen relative">
+      <InteractiveGridPattern
+        className={cn(
+          "[mask-image:radial-gradient(400px_circle_at_center,white,transparent)]",
+          "inset-x-0 inset-y-[20%] h-[100%] skew-y-12 pointer-events-none"
+        )}
+      />
 
-      <div className="max-w-5xl mx-auto p-6 pt-16 space-y-6">
+      <div className="max-w-5xl mx-auto p-6 pt-16 space-y-6 relative z-10">
         <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-primary">
           🧑‍💻 GitHub Profile Review Assistant
         </h1>
@@ -115,7 +125,7 @@ export default function GitHubProfileReviewPage() {
           Analyze any GitHub profile to uncover skills, strengths, and developer insights.
         </p>
 
-        {/* Input */}
+        {/* Username Input */}
         <div className="grid grid-cols-1 gap-4 mt-8">
           <input
             value={username}
@@ -145,12 +155,9 @@ export default function GitHubProfileReviewPage() {
           </div>
         )}
 
-        {/* Report Section */}
+        {/* Report Display */}
         {result && (
-          <div
-            ref={reportRef}
-            className="space-y-4 mt-6 p-6 bg-white rounded-lg shadow-md"
-          >
+          <div ref={reportRef} className="space-y-4 mt-6 p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center space-x-4">
               {result.profile.avatar_url && (
                 <img
@@ -160,7 +167,9 @@ export default function GitHubProfileReviewPage() {
                 />
               )}
               <div>
-                <h2 className="text-2xl font-semibold">{result.profile.name || result.profile.username}</h2>
+                <h2 className="text-2xl font-semibold">
+                  {result.profile.name || result.profile.username}
+                </h2>
                 <p className="text-gray-500">@{result.profile.username}</p>
                 <p className="text-gray-600 mt-1">{followersDisplay}</p>
               </div>

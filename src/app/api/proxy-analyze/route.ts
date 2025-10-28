@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
+interface GitHubProfile {
+  login: string;
+  name: string | null;
+  bio: string | null;
+  avatar_url: string;
+  followers: number;
+  following: number;
+  public_repos: number;
+}
+
+interface AIAnalysis {
+  summary?: string;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -17,10 +31,10 @@ export async function POST(req: NextRequest) {
         { status: githubResponse.status }
       );
     }
-    const profileData = await githubResponse.json();
+    const profileData: GitHubProfile = await githubResponse.json();
 
-    // 2️⃣ Try AI analysis, but catch failure gracefully
-    let analysis: any = null;
+    // 2️⃣ Call AI analysis safely
+    let analysis: AIAnalysis = {};
     try {
       const aiResponse = await fetch(
         "https://github-analysis-87738157215.europe-west1.run.app/analyze",
@@ -33,20 +47,18 @@ export async function POST(req: NextRequest) {
       if (aiResponse.ok) {
         analysis = await aiResponse.json();
       }
-    } catch (err) {
+    } catch (err: unknown) {
       console.warn("AI analysis failed, using fallback summary", err);
     }
 
-    // 3️⃣ Build summary
+    // 3️⃣ Build fallback summary if AI summary not available
     const fallbackSummary = `# GitHub Profile Executive Summary
 
 **Name:** ${profileData.name || github_username}  
-**Username:** ${profileData.login}  
-**Followers:** ${profileData.followers}  
-**Following:** ${profileData.following}  
-**Public Repos:** ${profileData.public_repos}  
+**Username:** @${profileData.login}  
+**Followers:** ${profileData.followers} | **Following:** ${profileData.following}  
 
-${profileData.name || github_username} is a GitHub user with ${profileData.public_repos} public repositories, ${profileData.followers} followers, and is following ${profileData.following} users.`;
+${profileData.name || github_username} has ${profileData.public_repos} public repositories, ${profileData.followers} followers, and is following ${profileData.following} users.`;
 
     return NextResponse.json({
       profile: {
@@ -58,12 +70,17 @@ ${profileData.name || github_username} is a GitHub user with ${profileData.publi
         following: profileData.following,
         public_repos: profileData.public_repos,
       },
-      analysis: analysis || { summary: fallbackSummary },
+      analysis: {
+        summary: analysis.summary || fallbackSummary,
+      },
     });
-  } catch (err) {
+  } catch (err: unknown) {
     console.error("Proxy analyze failed:", err);
     return NextResponse.json(
-      { error: "Proxy analyze failed", details: err instanceof Error ? err.message : err },
+      {
+        error: "Proxy analyze failed",
+        details: err instanceof Error ? err.message : String(err),
+      },
       { status: 500 }
     );
   }
