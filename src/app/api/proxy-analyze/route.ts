@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
 
     if (!response.ok) {
       // Try to parse error details as JSON, fallback to text
-      let errorDetails: any = null;
+      let errorDetails: Record<string, unknown> | string | null = null;
       try {
         errorDetails = await response.json();
       } catch {
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     const data = await response.json();
     return NextResponse.json(data);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Proxy error:", error);
     return NextResponse.json(
       { error: "Proxy request failed" },
