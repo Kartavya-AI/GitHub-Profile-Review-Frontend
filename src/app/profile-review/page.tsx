@@ -7,233 +7,93 @@ import html2canvas from "html2canvas";
 import { InteractiveGridPattern } from "@/components/magicui/interactive-grid-pattern";
 import { cn } from "@/lib/utils";
 
-interface GitHubFullAnalysis {
-  status: string;
-  github_username: string;
-  analysis_steps: string[];
-  result: Record<string, unknown>;
-  profile: {
-    name?: string;
-    username?: string;
-    bio?: string;
-    followers?: number;
-    following?: number;
-    avatar_url?: string;
-  };
-  repos: Array<{
-    name: string;
-    url: string;
-    description?: string;
-    stars?: number;
-    forks?: number;
-    language?: string;
-  }>;
-  skills: string[];
-  strengths: string[];
-  improvements: string[];
+interface GitHubProfile {
+  username?: string;
+  name?: string;
+  avatar_url?: string;
+  followers?: number;
+  following?: number;
+  public_repos?: number;
+}
+
+interface GitHubAnalysisResponse {
+  profile: GitHubProfile;
+  analysis?: { executive_summary?: string };
 }
 
 export default function GitHubProfileReviewPage() {
-  const [username, setUsername] = useState<string>("");
-  const [result, setResult] = useState<GitHubFullAnalysis | null>(null);
+  const [username, setUsername] = useState("");
+  const [result, setResult] = useState<GitHubAnalysisResponse | null>(null);
   const [summary, setSummary] = useState("");
+  const [followersDisplay, setFollowersDisplay] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
 
   const reportRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => setMounted(true), []);
 
-  /** Analyze GitHub Profile */
   const handleAnalyze = async () => {
-    if (!username.trim()) {
-      alert("Please enter a GitHub username");
-      return;
-    }
+    if (!username.trim()) return alert("Please enter a GitHub username");
 
     setLoading(true);
     setError("");
     setResult(null);
     setSummary("");
+    setFollowersDisplay("");
 
     try {
-      const response = await fetch("/api/proxy-analyze", {
+      const res = await fetch("/api/proxy-analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ github_username: username.trim() }),
       });
 
-      const data = await response.json();
+      const data: GitHubAnalysisResponse & { error?: string } = await res.json();
 
       if (data.error) {
-        let details = "";
-        if (data.details) {
-          if (typeof data.details === "string") {
-            try {
-              details = JSON.parse(data.details).detail || data.details;
-            } catch {
-              details = data.details;
-            }
-          } else if (typeof data.details === "object") {
-            details = data.details.detail || JSON.stringify(data.details);
-          }
-        }
-        setError(`⚠️ ${data.error}: ${details}`);
+        setError(`⚠️ ${data.error}`);
         setLoading(false);
         return;
       }
 
-      const raw = data.result?.raw || "";
-      const jsonMatch = raw.match(/```json\n([\s\S]+?)\n```/);
+      const profile = data.profile;
 
-      if (!jsonMatch) {
-        setError("⚠️ Could not extract analysis content.");
-        setLoading(false);
-        return;
-      }
+      // Fallback summary without bio
+      const fallbackSummary = `GitHub user ${profile.name || profile.username} has ${profile.followers ?? 0} followers, follows ${profile.following ?? 0}, and has ${profile.public_repos ?? 0} public repositories.`;
 
-      const parsedJson = JSON.parse(jsonMatch[1]);
-      const gitHubProfileData = await fetchGitHubProfile(username.trim());
+      const executiveSummary =
+        data.analysis?.executive_summary?.trim() || fallbackSummary;
 
-      const report =
-        parsedJson.report ||
-        parsedJson.skill_assessment_report ||
-        parsedJson.github_analysis_report ||
-        {};
-
-      const strengths =
-        report.key_strengths_and_areas_for_improvement?.strengths || [];
-      const improvements =
-        report.key_strengths_and_areas_for_improvement?.areas_for_improvement ||
-        [];
-      const repos = Array.isArray(report.repos) ? report.repos : [];
-      const skills = Array.isArray(report.skills) ? report.skills : [];
-
-      // Generate Markdown Executive Summary
-      const markdownSummary = getExecutiveSummaryMarkdown(
-        gitHubProfileData || {},
-        skills
-      );
-      setSummary(markdownSummary);
-
-      const normalizedResult: GitHubFullAnalysis = {
-        status: "success",
-        github_username: username.trim(),
-        analysis_steps: Array.isArray(data.analysis_steps)
-          ? data.analysis_steps
-          : [],
-        result: data.result,
-        profile: {
-          name: gitHubProfileData?.name || username.trim(),
-          username: username.trim(),
-          bio: markdownSummary,
-          followers: gitHubProfileData?.followers || 0,
-          following: gitHubProfileData?.following || 0,
-          avatar_url: gitHubProfileData?.avatar_url || "",
-        },
-        repos,
-        skills,
-        strengths,
-        improvements,
-      };
-
-      setResult(normalizedResult);
+      setSummary(executiveSummary);
+      setFollowersDisplay(`Followers: ${profile.followers ?? 0} | Following: ${profile.following ?? 0}`);
+      setResult(data);
     } catch (err) {
       console.error("Analysis Error:", err);
-      setError(
-        "⚠️ Unable to complete analysis. Please check the username and try again."
-      );
+      setError("⚠️ Unable to complete analysis. Please check the username and try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  /** Fetch GitHub user profile */
-  async function fetchGitHubProfile(username: string) {
-    try {
-      const res = await fetch(`https://api.github.com/users/${username}`);
-      if (!res.ok) throw new Error("GitHub user not found");
-      const profile = await res.json();
-      return {
-        name: profile.name,
-        followers: profile.followers,
-        following: profile.following,
-        avatar_url: profile.avatar_url,
-        bio: profile.bio,
-        username: profile.login,
-      };
-    } catch (err) {
-      console.warn("GitHub profile fetch error:", err);
-      return null;
-    }
-  }
+  const handleCopy = () => summary && navigator.clipboard.writeText(summary);
 
-  /** Generate Polished Markdown Executive Summary */
-  function getExecutiveSummaryMarkdown(
-    profile: { name?: string; username?: string; bio?: string; followers?: number; following?: number },
-    skills: string[]
-  ) {
-    const name = profile.name || profile.username || "This user";
-    const username = profile.username || "unknown";
-    const followers = profile.followers ?? 0;
-    const following = profile.following ?? 0;
-
-    return `# GitHub Profile Executive Summary
-
-**Name:** ${name}  
-**Username:** ${username}  
-**Followers:** ${followers}  
-**Following:** ${following}  
-
-## Overview
-${name} is a mid-level developer specializing in JavaScript and TypeScript, with a strong focus on frontend development. His GitHub profile demonstrates a solid understanding of these languages and experience in building personal projects and an NPM package.
-
-## Strengths
-- Proficient in JavaScript and TypeScript  
-- Experienced in frontend development projects  
-- Demonstrates initiative through personal projects and contributions  
-
-## Areas for Improvement
-- Community engagement (open-source contributions, discussions)  
-- Documentation practices  
-- Project management skills  
-- Backend development for full-stack capabilities  
-
-## Summary
-Overall, ${name} shows promise and potential for contributing effectively to frontend-focused projects. By enhancing community engagement, documentation, and backend skills, they can become a more well-rounded and collaborative developer.`;
-  }
-
-  /** Copy raw markdown */
-  const handleCopy = () => {
-    if (summary) {
-      navigator.clipboard.writeText(summary);
-    }
-  };
-
-  /** Download .md file */
   const handleDownload = () => {
-    if (summary) {
-      const blob = new Blob([summary], { type: "text/plain;charset=utf-8" });
-      saveAs(blob, `${result?.github_username}_profile_review.md`);
-    }
+    if (!summary) return;
+    const blob = new Blob([summary], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, `${result?.profile.username || "github_user"}_profile_review.md`);
   };
 
-  /** Download PDF snapshot */
   const handleDownloadPDF = async () => {
-    if (reportRef.current) {
-      const canvas = await html2canvas(reportRef.current, { scale: 2 });
-      const imgData = canvas.toDataURL("image/png");
-
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`${result?.github_username}_profile_review.pdf`);
-    }
+    if (!reportRef.current) return;
+    const canvas = await html2canvas(reportRef.current, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save(`${result?.profile.username || "github_user"}_profile_review.pdf`);
   };
 
   return (
@@ -252,17 +112,12 @@ Overall, ${name} shows promise and potential for contributing effectively to fro
           🧑‍💻 GitHub Profile Review Assistant
         </h1>
         <p className="text-gray-600">
-          Analyze any GitHub profile to uncover skills, strengths, and developer
-          insights.
+          Analyze any GitHub profile to uncover skills, strengths, and developer insights.
         </p>
 
         {/* Input */}
         <div className="grid grid-cols-1 gap-4 mt-8">
-          <label htmlFor="github-username" className="sr-only">
-            GitHub Username
-          </label>
           <input
-            id="github-username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="p-3 shadow-md bg-zinc-100 shadow-zinc-500 rounded-lg"
@@ -296,8 +151,25 @@ Overall, ${name} shows promise and potential for contributing effectively to fro
             ref={reportRef}
             className="space-y-4 mt-6 p-6 bg-white rounded-lg shadow-md"
           >
-            <h2 className="text-2xl font-semibold">Executive Summary</h2>
-            <pre className="whitespace-pre-wrap">{summary}</pre>
+            <div className="flex items-center space-x-4">
+              {result.profile.avatar_url && (
+                <img
+                  src={result.profile.avatar_url}
+                  alt={`${result.profile.username}'s avatar`}
+                  className="w-16 h-16 rounded-full border border-gray-300"
+                />
+              )}
+              <div>
+                <h2 className="text-2xl font-semibold">{result.profile.name || result.profile.username}</h2>
+                <p className="text-gray-500">@{result.profile.username}</p>
+                <p className="text-gray-600 mt-1">{followersDisplay}</p>
+              </div>
+            </div>
+
+            <div className="mt-4">
+              <h3 className="font-semibold text-lg">Executive Summary</h3>
+              <pre className="whitespace-pre-wrap mt-2">{summary}</pre>
+            </div>
 
             <div className="flex space-x-2 mt-4">
               <button

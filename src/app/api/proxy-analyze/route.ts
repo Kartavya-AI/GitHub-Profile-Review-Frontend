@@ -6,42 +6,64 @@ export async function POST(req: NextRequest) {
     const { github_username } = body;
 
     if (!github_username) {
-      return NextResponse.json(
-        { error: "Missing github_username" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing github_username" }, { status: 400 });
     }
 
-    const response = await fetch(
-      "https://github-analysis-87738157215.europe-west1.run.app/analyze",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ github_username }),
-      }
-    );
-
-    if (!response.ok) {
-      // Try to parse error details as JSON, fallback to text
-      let errorDetails: Record<string, unknown> | string | null = null;
-      try {
-        errorDetails = await response.json();
-      } catch {
-        errorDetails = await response.text();
-      }
-
+    // 1️⃣ Fetch GitHub profile
+    const githubResponse = await fetch(`https://api.github.com/users/${github_username}`);
+    if (!githubResponse.ok) {
       return NextResponse.json(
-        { error: "Upstream error", status: response.status, details: errorDetails },
-        { status: response.status }
+        { error: "GitHub user not found", status: githubResponse.status },
+        { status: githubResponse.status }
       );
     }
+    const profileData = await githubResponse.json();
 
-    const data = await response.json();
-    return NextResponse.json(data);
-  } catch (error: unknown) {
-    console.error("Proxy error:", error);
+    // 2️⃣ Try AI analysis, but catch failure gracefully
+    let analysis: any = null;
+    try {
+      const aiResponse = await fetch(
+        "https://github-analysis-87738157215.europe-west1.run.app/analyze",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ github_username }),
+        }
+      );
+      if (aiResponse.ok) {
+        analysis = await aiResponse.json();
+      }
+    } catch (err) {
+      console.warn("AI analysis failed, using fallback summary", err);
+    }
+
+    // 3️⃣ Build summary
+    const fallbackSummary = `# GitHub Profile Executive Summary
+
+**Name:** ${profileData.name || github_username}  
+**Username:** ${profileData.login}  
+**Followers:** ${profileData.followers}  
+**Following:** ${profileData.following}  
+**Public Repos:** ${profileData.public_repos}  
+
+${profileData.name || github_username} is a GitHub user with ${profileData.public_repos} public repositories, ${profileData.followers} followers, and is following ${profileData.following} users.`;
+
+    return NextResponse.json({
+      profile: {
+        username: profileData.login,
+        name: profileData.name,
+        bio: profileData.bio,
+        avatar_url: profileData.avatar_url,
+        followers: profileData.followers,
+        following: profileData.following,
+        public_repos: profileData.public_repos,
+      },
+      analysis: analysis || { summary: fallbackSummary },
+    });
+  } catch (err) {
+    console.error("Proxy analyze failed:", err);
     return NextResponse.json(
-      { error: "Proxy request failed" },
+      { error: "Proxy analyze failed", details: err instanceof Error ? err.message : err },
       { status: 500 }
     );
   }
