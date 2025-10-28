@@ -1,24 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { searchParams } = new URL(request.url);
-    const repo_url = searchParams.get("repo_url");
+    const body = await req.json();
+    const { github_username } = body;
 
-    if (!repo_url) {
-      return NextResponse.json({ error: "Missing repo_url query parameter" }, { status: 400 });
+    if (!github_username) {
+      return NextResponse.json(
+        { error: "Missing github_username" },
+        { status: 400 }
+      );
     }
 
-    const apiResponse = await axios.post(
-      `https://code-analysis-87738157215.asia-south1.run.app/analyze?repo_url=${encodeURIComponent(repo_url)}`,
-      {},
-      { timeout: 60000 }
+    const response = await fetch(
+      "https://github-analysis-87738157215.europe-west1.run.app/analyze",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ github_username }),
+      }
     );
 
-    return NextResponse.json(apiResponse.data);
+    if (!response.ok) {
+      // Try to parse error details as JSON, fallback to text
+      let errorDetails: any = null;
+      try {
+        errorDetails = await response.json();
+      } catch {
+        errorDetails = await response.text();
+      }
+
+      return NextResponse.json(
+        { error: "Upstream error", status: response.status, details: errorDetails },
+        { status: response.status }
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
-    console.error("Proxy API error:", error);
-    return NextResponse.json({ error: "Failed to fetch from upstream API" }, { status: 500 });
+    console.error("Proxy error:", error);
+    return NextResponse.json(
+      { error: "Proxy request failed" },
+      { status: 500 }
+    );
   }
 }
